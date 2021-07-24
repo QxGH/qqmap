@@ -28,7 +28,7 @@
           <i class="item-icon icon-1"></i>
           <p class="item-label">路线</p>
         </div>
-        <div class="item">
+        <div class="item" onclick="audioPlayHandle()">
           <i class="item-icon icon-2"></i>
           <p class="item-label">解说</p>
         </div>
@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <audio src=""></audio>
+    <audio id="audioPlayer" src="" preload></audio>
   </div>
 
   <script>

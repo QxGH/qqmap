@@ -98,7 +98,6 @@ function getDirectionData() {
     url: 'https://apis.map.qq.com/ws/direction/v1/walking/',
     data: formData,
     success: function(res) {
-      //业务处理
       if(res.status == 0) {
         if(res.result.routes && res.result.routes.length > 0) {
           let polyline = res.result.routes[0].polyline;
