@@ -6,23 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>qqmap</title>
   <link rel="stylesheet" href="./style.css">
+  <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
   <script src="https://unpkg.com/jquery@2.1.4/dist/jquery.js"></script>
   <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=6NNBZ-F7P3J-QLTFG-FQMOX-RCURZ-YVFM3&libraries=convertor"></script>
   <script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
+  <script src="./common.js"></script>
   <script src="./markerList.js"></script>
   <script src="./map.js"></script>
 </head>
 <body>
   <div class="container">
     <div id="map"></div>
-    <div class="marker-info">
+    <div class="marker-info" id="markerInfoWindow">
       <img src="./img/marker_info_img.jpeg" alt="" class="marker-info-img">
       <p class="marker-info-label">汉长安城未央宫遗址公园</p>
       <p class="marker-info-describe">
         汉长安城国家遗址是世界文化遗产，是在汉长安城遗址基础上建立，是汉长安城遗址保护工程是文化建设和城市......
       </p>
       <div class="icon-items">
-        <div class="item">
+        <div class="item" onclick="getDirectionData()">
           <i class="item-icon icon-1"></i>
           <p class="item-label">路线</p>
         </div>
@@ -36,6 +38,8 @@
         </div>
       </div>
     </div>
+
+    <audio src=""></audio>
   </div>
 
   <script>

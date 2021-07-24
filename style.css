@@ -19,6 +19,7 @@ body {
   height: 100%;
 }
 .marker-info {
+  display: none;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -60,6 +61,7 @@ body {
   display: flex;
   align-items: center;
   flex-direction: column;
+  cursor: pointer;
 }
 .marker-info .item-icon {
   display: block;
@@ -72,3 +74,5 @@ body {
   font-size: 12px;
   margin-top: 5px;
 }
+
+,

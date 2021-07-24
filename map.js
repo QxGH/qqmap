@@ -1,22 +1,26 @@
-var map = null, markersArray = [], labelsArray = [], latlngs = [];
+var qqmapKey = '6NNBZ-F7P3J-QLTFG-FQMOX-RCURZ-YVFM3'
+var map = null, markersArray = [], labelsArray = [], latlngs = [], polylineLayer = null;
+var currentMarketDate = {}
 
 function initMap() {
   map = new qq.maps.Map(document.getElementById("map"), {
-    // 地图的中心地理坐标。
-    center: new qq.maps.LatLng(34.302623,108.862049),
+    center: new qq.maps.LatLng(34.302623, 108.862049),
     zoom: 15
   });
   var groundOverlay = new qq.maps.GroundOverlay({
     map,
     imageUrl: './img/map_bg_2.png',
-    bounds: new qq.maps.LatLngBounds(new qq.maps.LatLng(34.312201,108.874794), new qq.maps.LatLng(34.293125,108.849341)),
+    bounds: new qq.maps.LatLngBounds(new qq.maps.LatLng(34.312201, 108.874794), new qq.maps.LatLng(34.293125, 108.849341)),
   });
+  addMarkers()
+}
 
+function addMarkers() {
   let markerIcon = new qq.maps.MarkerImage(
     "./img/marker.png",
   );
-  for(let a=0; a<markerList.length; a++) {
-    (function(b) {
+  for (let a = 0; a < markerList.length; a++) {
+    (function (b) {
       console.log(markerList[b])
       let item = markerList[b]
       let position = new qq.maps.LatLng(item.lat, item.lng)
@@ -32,14 +36,126 @@ function initMap() {
       // });
       markersArray.push(marker);
       // labelsArray.push(label);
-      qq.maps.event.addListener(marker, 'click', function() {
+      qq.maps.event.addListener(marker, 'click', function () {
+        currentMarketDate = item
+        hideMarkerInfoWindow()
         map.panTo(position);
+        showMarkerInfoWindow()
       });
     })(a)
-    
   }
 }
 
-$(function() {
+function deleteMarkers() {
+  if (markersArray) {
+    for (let i in markersArray) {
+      markersArray[i].setMap(null);
+    }
+    markersArray.length = 0;
+  }
+}
+
+function showMarkerInfoWindow() {
+  $('#markerInfoWindow').fadeIn(150)
+}
+
+function hideMarkerInfoWindow() {
+  $('#markerInfoWindow').fadeOut(150)
+}
+
+function addDirectionPath(path) {
+  polylineLayer = new qq.maps.Polyline({
+    map,
+    strokeColor: '#2589ff',
+    strokeWeight: 6,
+    path
+  });
+  console.log("🚀 ~ file: map.js ~ line 73 ~ addDirectionPath ~ polylineLayer", polylineLayer)
+}
+
+function deleteDirectionPath() {
+  if(polylineLayer) {
+    polylineLayer.setMap(null)
+    polylineLayer = null;
+  }
+}
+
+function getDirectionData() {
+  deleteDirectionPath();
+  hideMarkerInfoWindow();
+  let myLocation = '34.303717,108.860468', targetLocation = `${currentMarketDate.lat},${currentMarketDate.lng}`;
+  let formData = {
+    from: myLocation,
+    to: targetLocation,
+    key: qqmapKey,
+    output: 'jsonp'
+  };
+  $.ajax({
+    type: "GET",
+    dataType: 'jsonp',
+    jsonp: "callback",
+    jsonpCallback: "QQmap",
+    url: 'https://apis.map.qq.com/ws/direction/v1/walking/',
+    data: formData,
+    success: function(res) {
+      //业务处理
+      if(res.status == 0) {
+        if(res.result.routes && res.result.routes.length > 0) {
+          let polyline = res.result.routes[0].polyline;
+          let path = getPolylineData(polyline)
+          addDirectionPath(path)
+        }
+      } else {
+        alert(res.message)
+      }
+    },
+    error: function(err) {
+      alert('error')
+    }
+  });
+};
+
+function getPolylineData(coors) {
+  for (var i = 2; i < coors.length; i++) {
+    coors[i] = coors[i - 2] + coors[i] / 1000000;
+  }
+
+  var data = [];
+  for (var i = 0; i < coors.length; i++) {
+    //console.log(0 === i % 2, coors[i], coors[i + 1]);
+    if (0 === i % 2) data.push(new qq.maps.LatLng(coors[i], coors[i + 1]));
+  }
+
+  return data;
+}
+
+function test(coors) {
+  for (var i = 2; i < coors.length; i++) {
+    coors[i] = coors[i - 2] + coors[i] / 1000000;
+  }
+
+  var data = [];
+  for (var i = 0; i < coors.length; i++) {
+    //console.log(0 === i % 2, coors[i], coors[i + 1]);
+    if (0 === i % 2) data.push(new qq.maps.LatLng(coors[i], coors[i + 1]));
+  }
+
+  return data;
+}
+
+$(function () {
   initMap()
+
+  document.onmousedown = function (event) {
+    let e = event || window.event;
+    let elem = e.srcElement || e.target;
+    while (elem) {
+      if (elem.id == "markerInfoWindow" || (elem.classList && elem.classList.contains('csssprite'))) {
+        return;
+      }
+      elem = elem.parentNode;
+    }
+    hideMarkerInfoWindow()
+  }
+
 })
