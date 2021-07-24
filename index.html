@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>qqmap</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="https://unpkg.com/jquery@2.1.4/dist/jquery.js"></script>
+  <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=6NNBZ-F7P3J-QLTFG-FQMOX-RCURZ-YVFM3&libraries=convertor"></script>
+  <script src="https://unpkg.com/uuid@latest/dist/umd/uuidv4.min.js"></script>
+  <script src="./markerList.js"></script>
+  <script src="./map.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div id="map"></div>
+    <div class="marker-info">
+      <img src="./img/marker_info_img.jpeg" alt="" class="marker-info-img">
+      <p class="marker-info-label">汉长安城未央宫遗址公园</p>
+      <p>
+        汉长安城国家遗址是世界文化遗产，是在汉长安城遗址基础上建立，是汉长安城遗址保护工程是文化建设和城市......
+      </p>
+      <div class="icon-items">
+        <div class="item">
+          <i class="item-icon icon-1"></i>
+          <p class="item-label">路线</p>
+        </div>
+        <div class="item">
+          <i class="item-icon icon-2"></i>
+          <p class="item-label">解说</p>
+        </div>
+        <div class="item">
+          <i class="item-icon icon-3"></i>
+          <p class="item-label">详情</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    console.log(uuidv4())
+  </script>
+
+  
+</body>
+</html>
