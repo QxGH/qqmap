@@ -1,13 +1,17 @@
 var qqmapKey = '6NNBZ-F7P3J-QLTFG-FQMOX-RCURZ-YVFM3'
-var map = null, markersArray = [], labelsArray = [], latlngs = [], polylineLayer = null;
+var map = null, groundOverlay = null, markersArray = [], labelsArray = [], latlngs = [], polylineLayer = null;
 var currentMarketDate = {}
 
 function initMap() {
   map = new qq.maps.Map(document.getElementById("map"), {
     center: new qq.maps.LatLng(34.302623, 108.862049),
-    zoom: 15
+    zoom: 15,
+    zoomControl: false,
+    panControl: false,
+    mapTypeControl: false,
+    mapStyleId: 'style2'
   });
-  var groundOverlay = new qq.maps.GroundOverlay({
+  groundOverlay = new qq.maps.GroundOverlay({
     map,
     imageUrl: './img/map_bg_2.png',
     bounds: new qq.maps.LatLngBounds(new qq.maps.LatLng(34.312201, 108.874794), new qq.maps.LatLng(34.293125, 108.849341)),
@@ -15,34 +19,35 @@ function initMap() {
   addMarkers()
 }
 
+/**
+ * Marker
+ */
 function addMarkers() {
   let markerIcon = new qq.maps.MarkerImage(
     "./img/marker.png",
   );
-  for (let a = 0; a < markerList.length; a++) {
-    (function (b) {
-      console.log(markerList[b])
-      let item = markerList[b]
-      let position = new qq.maps.LatLng(item.lat, item.lng)
-      let marker = new qq.maps.Marker({
-        position,
-        map,
-        icon: markerIcon
-      });
-      // let label = new qq.maps.Label({
-      //   position,
-      //   map,
-      //   content: item.label
-      // });
-      markersArray.push(marker);
-      // labelsArray.push(label);
-      qq.maps.event.addListener(marker, 'click', function () {
-        currentMarketDate = item
-        hideMarkerInfoWindow()
-        map.panTo(position);
-        showMarkerInfoWindow()
-      });
-    })(a)
+  for (let i = 0; i < markerList.length; i++) {
+    let item = markerList[i]
+    let position = new qq.maps.LatLng(item.lat, item.lng)
+    let marker = new qq.maps.Marker({
+      position,
+      map,
+      icon: markerIcon
+    });
+    // let label = new qq.maps.Label({
+    //   position,
+    //   map,
+    //   content: item.label
+    // });
+    markersArray.push(marker);
+    // labelsArray.push(label);
+    qq.maps.event.addListener(marker, 'click', function() {
+      audioStop();
+      currentMarketDate = item;
+      hideMarkerInfoWindow();
+      map.panTo(position);
+      showMarkerInfoWindow();
+    });
   }
 }
 
@@ -55,6 +60,13 @@ function deleteMarkers() {
   }
 }
 
+function markerClickHandle(item, position) {
+  
+}
+
+/**
+ * MarkerInfoWindow
+ */
 function showMarkerInfoWindow() {
   $('#markerInfoWindow').fadeIn(150)
 }
@@ -63,6 +75,10 @@ function hideMarkerInfoWindow() {
   $('#markerInfoWindow').fadeOut(150)
 }
 
+
+/**
+ * path
+ */
 function addDirectionPath(path) {
   polylineLayer = new qq.maps.Polyline({
     map,
@@ -83,7 +99,7 @@ function deleteDirectionPath() {
 function getDirectionData() {
   deleteDirectionPath();
   hideMarkerInfoWindow();
-  let myLocation = '34.303717,108.860468', targetLocation = `${currentMarketDate.lat},${currentMarketDate.lng}`;
+  let myLocation = getMyLocation(), targetLocation = `${currentMarketDate.lat},${currentMarketDate.lng}`;
   let formData = {
     from: myLocation,
     to: targetLocation,
@@ -118,28 +134,15 @@ function getPolylineData(coors) {
   for (var i = 2; i < coors.length; i++) {
     coors[i] = coors[i - 2] + coors[i] / 1000000;
   }
-
   var data = [];
   for (var i = 0; i < coors.length; i++) {
-    //console.log(0 === i % 2, coors[i], coors[i + 1]);
     if (0 === i % 2) data.push(new qq.maps.LatLng(coors[i], coors[i + 1]));
   }
-
   return data;
-}
+};
 
-function test(coors) {
-  for (var i = 2; i < coors.length; i++) {
-    coors[i] = coors[i - 2] + coors[i] / 1000000;
-  }
-
-  var data = [];
-  for (var i = 0; i < coors.length; i++) {
-    //console.log(0 === i % 2, coors[i], coors[i + 1]);
-    if (0 === i % 2) data.push(new qq.maps.LatLng(coors[i], coors[i + 1]));
-  }
-
-  return data;
+function getMyLocation() {
+  return '34.303717,108.860468'
 }
 
 $(function () {
